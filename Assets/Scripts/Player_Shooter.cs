@@ -87,7 +87,9 @@ private SpawnManager _spawnManager;
 
     public void Damage()
     {
+        
         _lives--;
+        Debug.Log(_lives);
         //check if dead
         //if we are destroy us
          if(_lives < 1)

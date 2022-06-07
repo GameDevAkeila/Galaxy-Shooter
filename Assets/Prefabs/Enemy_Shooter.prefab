@@ -14,8 +14,6 @@ GameObject:
   - component: {fileID: 5541477581039880524}
   - component: {fileID: -1092140091023070935}
   - component: {fileID: 9158361151040465960}
-  - component: {fileID: 2775825946863783689}
-  - component: {fileID: -1873691732516443391}
   m_Layer: 0
   m_Name: Enemy_Shooter
   m_TagString: Enemy_Shooter
@@ -130,29 +128,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2775825946863783689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4348745215136083862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26cdc1d88c30a6c428095a48464627de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 4
---- !u!114 &-1873691732516443391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4348745215136083862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26cdc1d88c30a6c428095a48464627de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 3.8
