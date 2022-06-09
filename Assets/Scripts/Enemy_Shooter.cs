@@ -28,7 +28,7 @@ public class Enemy_Shooter : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         //if other is player
         //damage the player
