@@ -10,7 +10,9 @@ public class Player_Shooter : MonoBehaviour
 [SerializeField]
 private float _speed = 4.0f;
 [SerializeField]
-public GameObject _laserPrefab;
+private GameObject _laserPrefab;
+[SerializeField]
+private GameObject _tripleShotPrefab;
 [SerializeField]
 private float _fireRate = 0.15f;
 [SerializeField]
@@ -19,6 +21,10 @@ private float _canFire = -1f;
 private int _lives = 3;
 [SerializeField]
 private SpawnManager _spawnManager;
+[SerializeField]
+private bool _isTripleShotActive = true;
+
+    //variable for isTripleShotActive
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +33,7 @@ private SpawnManager _spawnManager;
          //find the GameObject. Then GetComponent
          if (_spawnManager == null)
          {
-             Debug.LogError("The Spawn Manager is Null");
+             Debug.LogError("The Spawn Manager is NULL.");
          }
     }
 
@@ -82,7 +88,21 @@ private SpawnManager _spawnManager;
     void FireLaser()
     {
          _canFire = Time.time + _fireRate;
+        if (_isTripleShotActive == true)
+        //instantiate for the triple shot
+        {
+            Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);
+        }
+        else
+        {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);
+        }
+        // if space key press, fire 1 laser
+        //if triple shot active true
+        // fire 3 lasers (triple shot prefab)
+        //else fire one laser
+
+        // instantiate 3 lasers (triple shot prefab)
     }
 
     public void Damage()
@@ -101,5 +121,32 @@ private SpawnManager _spawnManager;
          }
 
     }
+
+
+
+
+
+
+    public void TripleShotActive()
+    { 
+        //start the power down coroutine for triple shot
+        _isTripleShotActive = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        //IEnumerator tripleshotpowerdownroutine
+        //wait 5 seconds
+        // set the triple shot to false
+        yield return new WaitForSeconds(5.0f);
+        _isTripleShotActive = false;  
+    }
+    
+
+
+
+
+
     
 }
