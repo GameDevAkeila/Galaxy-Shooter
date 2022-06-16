@@ -8,7 +8,7 @@ public class Powerup : MonoBehaviour
     private float _speed = 3.0f;
 
     [SerializeField]
-    private int powerUpID;//0 = TripleShot 1 = Speed 3 = Shield
+    private int powerUpID;//0 = TripleShot 1 = Speed 2 = Shield
     // Start is called before the first frame update
 
     // Update is called once per frame
@@ -21,13 +21,9 @@ public class Powerup : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-
-        //when leave screen, destroy us
     }
-
     //OnTriggerEnter
     //Only be collectable by Player
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player_Shooter")
@@ -41,7 +37,7 @@ public class Powerup : MonoBehaviour
                         player.TripleShotActive();
                         break;
                     case 1:
-                         Debug.Log("Collected Speed Boost");
+                         player.SpeedBoostActive();
                          break;
                     case 2:
                         Debug.Log("Shields Collected");
@@ -60,4 +56,4 @@ public class Powerup : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-} //communicate with the Player scriptA
+} 

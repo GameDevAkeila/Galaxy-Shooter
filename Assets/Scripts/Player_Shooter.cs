@@ -9,6 +9,7 @@ public class Player_Shooter : MonoBehaviour
 //optional value assigned
 [SerializeField]
 private float _speed = 4.0f;
+private float _speedMultiplier = 2;
 [SerializeField]
 private GameObject _laserPrefab;
 [SerializeField]
@@ -21,8 +22,11 @@ private float _canFire = -1f;
 private int _lives = 3;
 [SerializeField]
 private SpawnManager _spawnManager;
+
 [SerializeField]
-private bool _isTripleShotActive = true;
+private bool _isTripleShotActive = false;
+[SerializeField]
+private bool _isSpeedBoostActive = false;
 
     //variable for isTripleShotActive
     // Start is called before the first frame update
@@ -42,7 +46,7 @@ private bool _isTripleShotActive = true;
 
     {
         CalculateMovement();
-        //if i hit the soace key
+        //if i hit the space key
         //spawn GameObject
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
@@ -57,8 +61,6 @@ private bool _isTripleShotActive = true;
               //new Vector3(5, 0, 0) * -5 * real time
         transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime);
         transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
-
-        
         
         if (transform.position.y >= 0)
         {
@@ -68,6 +70,7 @@ private bool _isTripleShotActive = true;
         {
             transform.position = new Vector3(transform.position.x, -3.8f, 0);
         }
+
 
         //if player on the x > 11
         //x pos = -11
@@ -122,11 +125,6 @@ private bool _isTripleShotActive = true;
 
     }
 
-
-
-
-
-
     public void TripleShotActive()
     { 
         //start the power down coroutine for triple shot
@@ -136,16 +134,25 @@ private bool _isTripleShotActive = true;
 
     IEnumerator TripleShotPowerDownRoutine()
     {
-        //IEnumerator tripleshotpowerdownroutine
-        //wait 5 seconds
-        // set the triple shot to false
+       
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;  
     }
     
 
+    public void SpeedBoostActive() 
+    {
+        _isSpeedBoostActive = true;
+        _speed *= _speedMultiplier;
+        StartCoroutine(SpeedBoostPowerDownRoutine());
+    }
 
-
+    IEnumerator SpeedBoostPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isSpeedBoostActive = false;
+        _speed /= _speedMultiplier;
+    }
 
 
     
