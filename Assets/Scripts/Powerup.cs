@@ -14,19 +14,18 @@ public class Powerup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // move down at the speed of 3
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);// move down at the speed of 3
 
         if (transform.position.y < -5.0f)
         {
             Destroy(this.gameObject);
         }
     }
-    //OnTriggerEnter
-    //Only be collectable by Player
-    private void OnTriggerEnter2D(Collider2D other)
+    
+    
+    private void OnTriggerEnter2D(Collider2D other)//OnTriggerEnter
     {
-        if (other.tag == "Player_Shooter")
+        if (other.tag == "Player_Shooter")          //Only be collectable by Player
         {
             Player_Shooter player = other.transform.GetComponent<Player_Shooter>();
             if (player != null)
@@ -37,20 +36,16 @@ public class Powerup : MonoBehaviour
                         player.TripleShotActive();
                         break;
                     case 1:
-                         player.SpeedBoostActive();
+                         player.SpeedBoostActive();         //else if powerUp is 1
                          break;
                     case 2:
-                        Debug.Log("Shields Collected");
+                        player.ShieldActive();              //else if powerup is 2
                         break;
                     default:
                         Debug.Log("Default Value");
                         break;
                 }
                
-                //else if powerUp is 1
-                //play speed powerip
-                //else if powerup is 2 
-                //shields powerup
             }
            
             Destroy(this.gameObject);

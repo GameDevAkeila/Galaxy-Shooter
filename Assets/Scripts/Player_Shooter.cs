@@ -23,13 +23,15 @@ private int _lives = 3;
 [SerializeField]
 private SpawnManager _spawnManager;
 
-[SerializeField]
-private bool _isTripleShotActive = false;
-[SerializeField]
+private bool _isTripleShotActive = false;//variable for isTripleShotActive
 private bool _isSpeedBoostActive = false;
+private bool _isShieldActive = false;
+[SerializeField]
+private GameObject _shieldVisual;
+//variable reference to the shield visualizer
 
-    //variable for isTripleShotActive
-    // Start is called before the first frame update
+// Start is called before the first frame update
+
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
@@ -70,8 +72,6 @@ private bool _isSpeedBoostActive = false;
         {
             transform.position = new Vector3(transform.position.x, -3.8f, 0);
         }
-
-
         //if player on the x > 11
         //x pos = -11
         //else if player on the x is less than -11
@@ -109,32 +109,31 @@ private bool _isSpeedBoostActive = false;
     }
 
     public void Damage()
-    {
+    {                                                //if shield is active
+        if(_isShieldActive == true)                  //do nothing...
+        {
+            _isShieldActive = false; 
+            _shieldVisual.SetActive(false);   //deactivate shield//disable the visualizer
+            return;                                 //return;
+        }
         _lives--;
-       // Debug.Log(_lives);
-        //check if dead
-        //if we are destroy us
-         if(_lives < 1)
+       
+         if(_lives < 1)                    // Debug.Log(_lives);//check if dead//if we are destroy us
          {
-             //communicate with SpawnManager 
-             //let them know to stop 
-            _spawnManager.OnPlayerDeath();
+            _spawnManager.OnPlayerDeath(); //communicate with SpawnManager //let them know to stop
             Destroy(this.gameObject);
-
          }
 
     }
 
     public void TripleShotActive()
     { 
-        //start the power down coroutine for triple shot
-        _isTripleShotActive = true;
+        _isTripleShotActive = true;                       //start the power down coroutine for triple shot
         StartCoroutine(TripleShotPowerDownRoutine());
     }
 
     IEnumerator TripleShotPowerDownRoutine()
     {
-       
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;  
     }
@@ -154,6 +153,12 @@ private bool _isSpeedBoostActive = false;
         _speed /= _speedMultiplier;
     }
 
+    public void ShieldActive()
+    {
+        _isShieldActive = true;
+       _shieldVisual.SetActive(true);     // enable the visualizer
+       
+    }
 
     
 }
