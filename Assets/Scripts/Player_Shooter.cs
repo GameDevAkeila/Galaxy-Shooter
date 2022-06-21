@@ -127,6 +127,8 @@ private UIManager _uiManager;
             return;                          //return;
         }
         _lives--;
+
+        _uiManager.UpdateLives(_lives);
        
          if(_lives < 1)                    // Debug.Log(_lives);//check if dead//if we are destroy us
          {
