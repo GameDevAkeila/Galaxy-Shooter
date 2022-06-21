@@ -28,7 +28,11 @@ private bool _isSpeedBoostActive = false;
 private bool _isShieldActive = false;
 [SerializeField]
 private GameObject _shieldVisual;
-//variable reference to the shield visualizer
+
+[SerializeField]
+private int _score;             //variable reference to the shield visualizer
+
+private UIManager _uiManager;
 
 // Start is called before the first frame update
 
@@ -36,11 +40,17 @@ private GameObject _shieldVisual;
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
          //find the GameObject. Then GetComponent
          if (_spawnManager == null)
          {
              Debug.LogError("The Spawn Manager is NULL.");
          }
+
+         if(_uiManager == null)
+        {
+            Debug.LogError("The UI Manager is NULL.");
+        }
     }
 
     // Update is called once per frame
@@ -109,12 +119,12 @@ private GameObject _shieldVisual;
     }
 
     public void Damage()
-    {                                                //if shield is active
-        if(_isShieldActive == true)                  //do nothing...
+    {                                          //if shield is active
+        if(_isShieldActive == true)           //do nothing...
         {
             _isShieldActive = false; 
             _shieldVisual.SetActive(false);   //deactivate shield//disable the visualizer
-            return;                                 //return;
+            return;                          //return;
         }
         _lives--;
        
@@ -128,7 +138,7 @@ private GameObject _shieldVisual;
 
     public void TripleShotActive()
     { 
-        _isTripleShotActive = true;                       //start the power down coroutine for triple shot
+        _isTripleShotActive = true;                  //start the power down coroutine for triple shot
         StartCoroutine(TripleShotPowerDownRoutine());
     }
 
@@ -139,7 +149,7 @@ private GameObject _shieldVisual;
     }
     
 
-    public void SpeedBoostActive() 
+    public void SpeedBoostActive()
     {
         _isSpeedBoostActive = true;
         _speed *= _speedMultiplier;
@@ -160,5 +170,11 @@ private GameObject _shieldVisual;
        
     }
 
-    
+    public void AddScore(int points)
+    {
+        _score += points;
+        _uiManager.UpdateScore(_score);
+    }
+ //method to add 10 to the Score
+ //communicate with the UI to update the score   
 }
