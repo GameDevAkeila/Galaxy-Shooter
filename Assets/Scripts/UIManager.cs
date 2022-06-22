@@ -11,12 +11,14 @@ public class UIManager : MonoBehaviour
     private Image _LivesImg;
     [SerializeField]
     private Sprite[] _livesSprite;
+    [SerializeField]
+    private TMP_Text _gameOverText;
 
     // Start is called before the first frame update
     void Start()
     {
-       // _livesSprite[CurrentPlayer_ShooterLives = 3]
-        _scoreText.text = "Score: " + 0; //assign text copmonent to the handle
+        _scoreText.text = "Score: " + 0;            //assign text component to the handle
+        _gameOverText.gameObject.SetActive(false);
     }
 
     public void UpdateScore(int playerShooterScore)
@@ -26,7 +28,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int currentLives)
     {
-        _LivesImg.sprite = _livesSprite[currentLives];  //display img sprite//give it a new one base on currentLives index
+        _LivesImg.sprite = _livesSprite[currentLives]; //display img sprite//give it a new one base on currentLives index
+
+        if(currentLives == 0)
+        {
+            _gameOverText.gameObject.SetActive(true);
+        }
     }
 
 } 
