@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _scoreText.text = "Score: " + 0;            //assign text component to the handle
+        _scoreText.text = "Score: " + 0;                                            //assign text component to the handle
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
