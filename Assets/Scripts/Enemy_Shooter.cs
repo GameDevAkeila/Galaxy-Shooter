@@ -6,11 +6,32 @@ public class Enemy_Shooter : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 4.0f;
+
+    private Player_Shooter _playerShooter;
+    private Animator _anim;// handle to animator component
+
+    
+
     // Start is called before the first frame update
-    void Start()
+     void Start()
     {
-        
+        _playerShooter = GameObject.Find("Player_Shooter").GetComponent<Player_Shooter>();
+        // null check for the player
+        if (_playerShooter == null)
+        {
+            Debug.LogError("The Player_Shooter is NULL");
+        }
+
+        _anim = GetComponent<Animator>();
+
+        if (_anim == null)
+        {
+            Debug.LogError("The Anomator is Null.");
+        }
+
+        //assign the componenet to Anim
     }
+
 
     // Update is called once per frame
     void Update()
@@ -28,7 +49,7 @@ public class Enemy_Shooter : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         //if other is player
         //damage the player
@@ -40,8 +61,10 @@ public class Enemy_Shooter : MonoBehaviour
             {
                 player.Damage();
             }
-
-            Destroy(this.gameObject);
+            // trigger aimation
+            _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0f;
+            Destroy(this.gameObject, 2.25f);
        }
 
         //if other is laser
@@ -50,7 +73,14 @@ public class Enemy_Shooter : MonoBehaviour
         if(other.tag == "Laser")
        {
            Destroy(other.gameObject);
-           Destroy(this.gameObject);
-        }
+           if (_playerShooter != null)
+            {
+                _playerShooter.AddScore(5);
+            }
+            // trigger animation
+            _anim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            Destroy(this.gameObject,2.25f);
+        }//add 10 to Score
     }
 }

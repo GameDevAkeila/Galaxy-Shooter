@@ -8,12 +8,16 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemy_shooterPrefab;
     [SerializeField]
     private GameObject _enemyContainer;
+    [SerializeField]
+    private GameObject[] powerups;
 
     private bool _stopSpawning = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnRoutine());
+        StartCoroutine(SpawnEnemyRoutine());
+        StartCoroutine(SpawnPowerUpRoutine());
     }
 
     // Update is called once per frame
@@ -24,7 +28,7 @@ public class SpawnManager : MonoBehaviour
     // spawn game objects every 5 seconds
     //Create a coroutine of type IEnumerator -- Yield Events
     //While loop
-    IEnumerator SpawnRoutine()
+    IEnumerator SpawnEnemyRoutine()
     {
         while (_stopSpawning == false)
         {
@@ -37,6 +41,17 @@ public class SpawnManager : MonoBehaviour
         //Instantiate enemy prefab
         //yield wait for 5 seconds
 
+    }
+    IEnumerator SpawnPowerUpRoutine()
+    {
+        while(_stopSpawning == false)
+        {
+        Vector3 posToSpawn = new Vector3 (Random.Range(-8.0f, 8.0f), 7, 0);
+        int randomPowerUp = Random.Range(0, 3);
+        Instantiate(powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+        yield return new WaitForSeconds(Random.Range(3, 8));
+        }
+        // every 3-7 seconds, spawn in a powerup
     }
 
     public void OnPlayerDeath()

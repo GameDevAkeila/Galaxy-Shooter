@@ -21,7 +21,14 @@ private float _speed = 8.0f;
         //if laser position is greater than 8 on the y
         //destroy the object
         if( transform.position.y > 8.0f)
-        {
+         {
+            // check if this object has a parent
+            //destroy parent too!
+         if (transform.parent != null)
+         {
+            Destroy(transform.parent.gameObject);
+         }
+       
             Destroy(this.gameObject);
         }
     }
