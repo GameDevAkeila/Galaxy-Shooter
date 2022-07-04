@@ -31,9 +31,10 @@ public class SpawnManager : MonoBehaviour
     //While loop
     IEnumerator SpawnEnemyRoutine()
     {
+        yield return new WaitForSeconds(3.5f);
+
         while (_stopSpawning == false)
         {
-            yield return new WaitForSeconds(3.5f);
             Vector3 posToSpawn = new Vector3(Random.Range(-8.0f, 8.0f), 7, 0);
             GameObject newEnemy = Instantiate(_enemy_shooterPrefab, posToSpawn, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;

@@ -26,13 +26,26 @@ private SpawnManager _spawnManager;
 private bool _isTripleShotActive = false;//variable for isTripleShotActive
 private bool _isSpeedBoostActive = false;
 private bool _isShieldActive = false;
+
 [SerializeField]
 private GameObject _shieldVisual;
+
+[SerializeField]
+private GameObject _rightEngineVisual;
+[SerializeField]
+private GameObject _leftEngineVisual;
 
 [SerializeField]
 private int _score;             //variable reference to the shield visualizer
 
 private UIManager _uiManager;
+
+[SerializeField]
+private AudioClip _laserSoundClip;
+[SerializeField]
+private AudioSource _audioSource;
+
+    
 
 // Start is called before the first frame update
 
@@ -41,6 +54,7 @@ private UIManager _uiManager;
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
          //find the GameObject. Then GetComponent
          if (_spawnManager == null)
          {
@@ -48,9 +62,18 @@ private UIManager _uiManager;
          }
 
          if(_uiManager == null)
-        {
+         {
             Debug.LogError("The UI Manager is NULL.");
-        }
+         }
+
+         if (_audioSource == null)
+         {
+            Debug.LogError("The Audio Source on Player is NULL.");
+         }
+         else
+         {
+            _audioSource.clip = _laserSoundClip;
+         }
     }
 
     // Update is called once per frame
@@ -110,6 +133,8 @@ private UIManager _uiManager;
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);
         }
+        //play laser audio clip
+        _audioSource.Play();
         // if space key press, fire 1 laser
         //if triple shot active true
         // fire 3 lasers (triple shot prefab)
@@ -127,6 +152,19 @@ private UIManager _uiManager;
             return;                          //return;
         }
         _lives--;
+
+        //if lives is 2
+        // enable right engine
+        //else if lives is 1
+        //enable left engine
+        if(_lives == 2)
+        {
+            _rightEngineVisual.SetActive(true);
+        }
+        else if (_lives == 1)
+        {
+            _leftEngineVisual.SetActive(true);
+        }
 
         _uiManager.UpdateLives(_lives);
        
