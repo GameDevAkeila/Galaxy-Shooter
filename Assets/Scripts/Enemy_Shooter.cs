@@ -10,13 +10,16 @@ public class Enemy_Shooter : MonoBehaviour
     private Player_Shooter _playerShooter;
     private Animator _anim;// handle to animator component
 
-    
+    private AudioSource _audioSource;
+
+
 
     // Start is called before the first frame update
-     void Start()
+    void Start()
     {
         _playerShooter = GameObject.Find("Player_Shooter").GetComponent<Player_Shooter>();
         // null check for the player
+        _audioSource = GetComponent<AudioSource>();
         if (_playerShooter == null)
         {
             Debug.LogError("The Player_Shooter is NULL");
@@ -64,6 +67,7 @@ public class Enemy_Shooter : MonoBehaviour
             // trigger aimation
             _anim.SetTrigger("OnEnemyDeath");
             _speed = 0f;
+            _audioSource.Play();
             Destroy(this.gameObject, 2.25f);
        }
 
@@ -80,6 +84,7 @@ public class Enemy_Shooter : MonoBehaviour
             // trigger animation
             _anim.SetTrigger("OnEnemyDeath");
             _speed = 0;
+            _audioSource.Play();
             Destroy(this.gameObject,2.25f);
         }//add 10 to Score
     }

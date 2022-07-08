@@ -42,7 +42,7 @@ private UIManager _uiManager;
 
 [SerializeField]
 private AudioClip _laserSoundClip;
-[SerializeField]
+
 private AudioSource _audioSource;
 
     
@@ -55,6 +55,7 @@ private AudioSource _audioSource;
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
+
          //find the GameObject. Then GetComponent
          if (_spawnManager == null)
          {
