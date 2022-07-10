@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player_Shooter : MonoBehaviour
-{//public or private reference
-//data type (int, float, bool, string)
-//every variable has a name
-//optional value assigned
+{
 [SerializeField]
 private float _speed = 4.0f;
 private float _speedMultiplier = 2;
@@ -28,7 +25,7 @@ private bool _isSpeedBoostActive = false;
 private bool _isShieldActive = false;
 
 [SerializeField]
-private GameObject _shieldVisual;
+private GameObject _shieldVisual;//variable reference to the shield visualizer
 
 [SerializeField]
 private GameObject _rightEngineVisual;
@@ -36,7 +33,7 @@ private GameObject _rightEngineVisual;
 private GameObject _leftEngineVisual;
 
 [SerializeField]
-private int _score;             //variable reference to the shield visualizer
+private int _score;             
 
 private UIManager _uiManager;
 
@@ -79,12 +76,10 @@ private AudioSource _audioSource;
 
     // Update is called once per frame
     void Update()
-
     {
         CalculateMovement();
-        //if i hit the space key
-        //spawn GameObject
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
+      
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)//if i hit the space key//spawn GameObject
         {
             FireLaser();
         }
@@ -94,8 +89,7 @@ private AudioSource _audioSource;
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-              //new Vector3(5, 0, 0) * -5 * real time
-        transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime);
+        transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime); //new Vector3(5, 0, 0) * -5 * real time
         transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
         
         if (transform.position.y >= 0)
@@ -106,18 +100,14 @@ private AudioSource _audioSource;
         {
             transform.position = new Vector3(transform.position.x, -3.8f, 0);
         }
-        //if player on the x > 11
-        //x pos = -11
-        //else if player on the x is less than -11
-        //x pos = 11
-        if (transform.position.x > 11.3f)
+        
+        if (transform.position.x > 11.3f)                                   //if player on the x > 11
         {
-            transform.position = new Vector3(-11.3f, transform.position.y, 0);
-
+            transform.position = new Vector3(-11.3f, transform.position.y, 0);//x pos = -11
         }
-        else if (transform.position.x < -11.3f)
+        else if (transform.position.x < -11.3f)                                //else if player on the x is less than -11
         {
-            transform.position = new Vector3(11.3f,transform.position.y, 0);
+            transform.position = new Vector3(11.3f,transform.position.y, 0);//x pos = 11
         }
 
     }
@@ -125,23 +115,16 @@ private AudioSource _audioSource;
     void FireLaser()
     {
          _canFire = Time.time + _fireRate;
-        if (_isTripleShotActive == true)
-        //instantiate for the triple shot
+        if (_isTripleShotActive == true)                                            //instantiate for the triple shot   //if triple shot active true   // if space key press, fire 1 laser
         {
-            Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);
+            Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
         }
         else
         {
-            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);
+            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);//else fire one laser
         }
-        //play laser audio clip
-        _audioSource.Play();
-        // if space key press, fire 1 laser
-        //if triple shot active true
-        // fire 3 lasers (triple shot prefab)
-        //else fire one laser
-
-        // instantiate 3 lasers (triple shot prefab)
+        
+        _audioSource.Play();//play laser audio clip
     }
 
     public void Damage()
@@ -154,17 +137,13 @@ private AudioSource _audioSource;
         }
         _lives--;
 
-        //if lives is 2
-        // enable right engine
-        //else if lives is 1
-        //enable left engine
-        if(_lives == 2)
+        if(_lives == 2)                         //if lives is 2
         {
-            _rightEngineVisual.SetActive(true);
+            _rightEngineVisual.SetActive(true);// enable right engine
         }
-        else if (_lives == 1)
+        else if (_lives == 1)                   //else if lives is 1
         {
-            _leftEngineVisual.SetActive(true);
+            _leftEngineVisual.SetActive(true); //enable left engine
         }
 
         _uiManager.UpdateLives(_lives);
@@ -211,11 +190,9 @@ private AudioSource _audioSource;
        
     }
 
-    public void AddScore(int points)
+    public void AddScore(int points)//method to add 10 to the Score
     {
         _score += points;
-        _uiManager.UpdateScore(_score);
+        _uiManager.UpdateScore(_score);//communicate with the UI to update the score
     }
- //method to add 10 to the Score
- //communicate with the UI to update the score   
 }

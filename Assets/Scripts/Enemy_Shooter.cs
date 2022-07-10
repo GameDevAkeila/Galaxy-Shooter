@@ -6,13 +6,14 @@ public class Enemy_Shooter : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 4.0f;
+    [SerializeField]
+    private GameObject _laserPrefab;
 
     private Player_Shooter _playerShooter;
     private Animator _anim;// handle to animator component
-
     private AudioSource _audioSource;
-
-
+    private float _fireRate = 3.0f;
+    private float _canFire = -1f;
 
     // Start is called before the first frame update
     void Start()
@@ -25,67 +26,75 @@ public class Enemy_Shooter : MonoBehaviour
             Debug.LogError("The Player_Shooter is NULL");
         }
 
-        _anim = GetComponent<Animator>();
+        _anim = GetComponent<Animator>();//assign the componenet to Anim
 
         if (_anim == null)
         {
-            Debug.LogError("The Anomator is Null.");
+            Debug.LogError("The Animator is Null.");
         }
 
-        //assign the componenet to Anim
     }
-
+  
 
     // Update is called once per frame
     void Update()
 
     {
-        // move enemy down 4 meters per second
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        //if at bottom of screen
-        //respawn at top with new random X position
+        CalculateMovement();
 
-        if (transform.position.y < -5f)
+        if (Time.time > _canFire)
+      
         {
-            float randomV = Random.Range(-8f, 8f);
+            _fireRate = Random.Range(3f, 5f);
+            _canFire = Time.time + _fireRate;
+            GameObject enemyLaser = Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+   
+            for (int i = 0; i < lasers.Length; i++)
+            {
+               lasers[i].AssignEnemyLaser();
+            }
+        }
+    }
+
+    void CalculateMovement()
+    { 
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);// move enemy down 4 meters per second
+        if (transform.position.y <-5f)          //if at bottom of screen
+        {
+            float randomV = Random.Range(-8f, 8f);//respawn at top with new random X position
             transform.position = new Vector3(randomV, 7, 0);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        //if other is player
-        //damage the player
-        //destroy us
-        if(other.tag == "Player_Shooter")
+        if(other.tag == "Player_Shooter")                                           //if other is player
         {
-            Player_Shooter player = other.transform.GetComponent<Player_Shooter>();
+            Player_Shooter player = other.transform.GetComponent<Player_Shooter>();//damage the player
             if (player != null)
             {
                 player.Damage();
             }
-            // trigger aimation
-            _anim.SetTrigger("OnEnemyDeath");
+            _anim.SetTrigger("OnEnemyDeath");           // trigger aimation
             _speed = 0f;
             _audioSource.Play();
-            Destroy(this.gameObject, 2.25f);
+            Destroy(this.gameObject, 2.25f);            //destroy us
        }
 
-        //if other is laser
-        //damage laser
-        //destroy us
-        if(other.tag == "Laser")
+        if(other.tag == "Laser")//if other is laser
        {
-           Destroy(other.gameObject);
+           Destroy(other.gameObject);//damage laser
            if (_playerShooter != null)
             {
-                _playerShooter.AddScore(5);
+                _playerShooter.AddScore(5);//add 10 to Score
             }
-            // trigger animation
-            _anim.SetTrigger("OnEnemyDeath");
+            _anim.SetTrigger("OnEnemyDeath");// trigger animation
             _speed = 0;
             _audioSource.Play();
-            Destroy(this.gameObject,2.25f);
-        }//add 10 to Score
+
+            Destroy(GetComponent<Collider2D>());
+            Destroy(this.gameObject,2.25f);//destroy us
+        }
     }
 }
