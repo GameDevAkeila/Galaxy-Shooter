@@ -31,6 +31,8 @@ private GameObject _shieldVisual;//variable reference to the shield visualizer
 private GameObject _rightEngineVisual;
 [SerializeField]
 private GameObject _leftEngineVisual;
+[SerializeField]
+private GameObject _thruster;
 
 [SerializeField]
 private int _score;             
@@ -83,6 +85,9 @@ private AudioSource _audioSource;
         {
             FireLaser();
         }
+
+        Thruster();
+       
     }
       
     void CalculateMovement()  
@@ -110,6 +115,23 @@ private AudioSource _audioSource;
             transform.position = new Vector3(11.3f,transform.position.y, 0);//x pos = 11
         }
 
+    }
+
+    void Thruster()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if(_thruster != null)
+            {
+                _speed = 10f;
+                _thruster.SetActive(true);
+            }
+        }
+        else
+        {
+            _speed = 4f;
+            _thruster.SetActive(false);
+        }
     }
 
     void FireLaser()
