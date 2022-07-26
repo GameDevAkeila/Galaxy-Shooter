@@ -20,29 +20,43 @@ private int _lives = 3;
 [SerializeField]
 private SpawnManager _spawnManager;
 
-private bool _isTripleShotActive = false;//variable for isTripleShotActive
-private bool _isSpeedBoostActive = false;
-private bool _isShieldActive = false;
-
+    private bool _isTripleShotActive = false;//variable for isTripleShotActive
+    private bool _isSpeedBoostActive = false;
+    private bool _isShieldActive = false;
+  //  private bool _isAmmoActive = false; //variable reference for isAmmoActive
 [SerializeField]
 private GameObject _shieldVisual;//variable reference to the shield visualizer
 
 [SerializeField]
-private GameObject _rightEngineVisual;
-[SerializeField]
-private GameObject _leftEngineVisual;
-[SerializeField]
-private GameObject _thruster;
+private int _shieldHits;
 
-[SerializeField]
-private int _score;             
+private int _shieldMax = 3;
+private int _shieldMin = 0;
 
-private UIManager _uiManager;
+private Color _shieldColor;
 
-[SerializeField]
-private AudioClip _laserSoundClip;
+    private SpriteRenderer _shieldSpriteRenderer;
 
-private AudioSource _audioSource;
+    [SerializeField]
+    private GameObject _rightEngineVisual;
+    [SerializeField]
+    private GameObject _leftEngineVisual;
+    [SerializeField]
+    private GameObject _thruster;
+
+    [SerializeField]
+    private int _score;
+    [SerializeField]
+    private int _ammoCount = 15;
+
+    private UIManager _uiManager;
+
+    [SerializeField]
+    private AudioClip _laserSoundClip;
+    [SerializeField]
+    private AudioClip _emptyAmmoSound;
+
+    private AudioSource _audioSource;
 
     
 
@@ -54,14 +68,16 @@ private AudioSource _audioSource;
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
+        //Get Component
+        _shieldSpriteRenderer = _shieldVisual.GetComponent<SpriteRenderer>();
 
-         //find the GameObject. Then GetComponent
-         if (_spawnManager == null)
+        //find the GameObject. Then GetComponent
+        if (_spawnManager == null)
          {
              Debug.LogError("The Spawn Manager is NULL.");
          }
 
-         if(_uiManager == null)
+         if (_uiManager == null)
          {
             Debug.LogError("The UI Manager is NULL.");
          }
@@ -74,6 +90,12 @@ private AudioSource _audioSource;
          {
             _audioSource.clip = _laserSoundClip;
          }
+
+        //NUll Check Component
+        if (_shieldSpriteRenderer == null)
+        {
+            Debug.LogError("ShieldVisual is NULL on Player");
+        }
     }
 
     // Update is called once per frame
@@ -83,9 +105,14 @@ private AudioSource _audioSource;
       
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)//if i hit the space key//spawn GameObject
         {
+            if (_ammoCount == 0)
+            {
+                AudioSource.PlayClipAtPoint(_emptyAmmoSound, transform.position);
+                return;
+            }
             FireLaser();
         }
-
+        
         Thruster();
        
     }
@@ -136,7 +163,8 @@ private AudioSource _audioSource;
 
     void FireLaser()
     {
-         _canFire = Time.time + _fireRate;
+        CheckAmmo(-1);
+        _canFire = Time.time + _fireRate;
         if (_isTripleShotActive == true)                                            //instantiate for the triple shot   //if triple shot active true   // if space key press, fire 1 laser
         {
             Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
@@ -149,14 +177,53 @@ private AudioSource _audioSource;
         _audioSource.Play();//play laser audio clip
     }
 
+    public void CheckAmmo(int ammo)
+    {
+        if(ammo >= _ammoCount)
+        {
+            _ammoCount = 15;
+        }
+        else
+        {
+            _ammoCount += ammo;
+        }
+        
+        _uiManager.AmmoCountUpdate(_ammoCount);
+    }
+
+
     public void Damage()
     {                                          //if shield is active
         if(_isShieldActive == true)           //do nothing...
         {
-            _isShieldActive = false; 
-            _shieldVisual.SetActive(false);   //deactivate shield//disable the visualizer
-            return;                          //return;
+            _shieldHits--;
+
+            int _shieldHitsClamp = Mathf.Clamp(_shieldHits, _shieldMin, _shieldMax);
+            _shieldHits = _shieldHitsClamp;
+
+            if (_shieldHits == 2)
+            {
+                _shieldColor = _shieldSpriteRenderer.color;
+                _shieldColor.a = 0.66f;
+                _shieldSpriteRenderer.color = _shieldColor;
+            }
+            else if (_shieldHits == 1)
+            {
+                _shieldColor = _shieldSpriteRenderer.color;
+                _shieldColor.a = 0.33f;
+                _shieldSpriteRenderer.color = _shieldColor;
+            }
+
+            if (_shieldHits <= _shieldMin)
+            {
+                _shieldHits = 0;
+                _isShieldActive = false;
+                _shieldVisual.SetActive(false);   //deactivate shield//disable the visualizer
+            }
+
+                return;                          //return;
         }
+
         _lives--;
 
         if(_lives == 2)                         //if lives is 2
@@ -178,6 +245,22 @@ private AudioSource _audioSource;
 
     }
 
+    public void LifeRefillActive(int addLives)
+    {
+        if (addLives >= _lives)
+        {
+            _lives++;                           //Increase lives by 1
+        }
+        else
+        {
+            _lives += addLives;
+            _rightEngineVisual.SetActive(false); // _rightEngineVisual.SetActive(false);
+        }
+            _uiManager.UpdateLives(_lives);     //update sprite img with the parameter of player lives                           
+            _leftEngineVisual.SetActive(false);//reset engine damage to false
+    }
+
+
     public void TripleShotActive()
     { 
         _isTripleShotActive = true;                  //start the power down coroutine for triple shot
@@ -190,7 +273,6 @@ private AudioSource _audioSource;
         _isTripleShotActive = false;  
     }
     
-
     public void SpeedBoostActive()
     {
         _isSpeedBoostActive = true;
@@ -207,9 +289,10 @@ private AudioSource _audioSource;
 
     public void ShieldActive()
     {
+        _shieldHits = 3;
+        _shieldSpriteRenderer.color = new Color(1f, 1f, 1f, 1f);
         _isShieldActive = true;
        _shieldVisual.SetActive(true);     // enable the visualizer
-       
     }
 
     public void AddScore(int points)//method to add 10 to the Score

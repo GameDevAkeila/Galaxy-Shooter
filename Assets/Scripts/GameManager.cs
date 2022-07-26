@@ -29,12 +29,20 @@ public class GameManager : MonoBehaviour
         {
             Application.Quit();
         }
+
     }
     public void GameOver()
-
     {
-        _isGameOver = true;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+
+       _isGameOver = true;
     }  
+
+ 
+    
     
     
 }
