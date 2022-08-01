@@ -6,35 +6,38 @@ public class Player_Shooter : MonoBehaviour
 {
 [SerializeField]
 private float _speed = 4.0f;
-private float _speedMultiplier = 2;
-[SerializeField]
-private GameObject _laserPrefab;
-[SerializeField]
-private GameObject _tripleShotPrefab;
-[SerializeField]
-private float _fireRate = 0.15f;
-[SerializeField]
-private float _canFire = -1f;
-[SerializeField]
-private int _lives = 3;
-[SerializeField]
-private SpawnManager _spawnManager;
+private float _speedMultiplier = 4;
 
+    [SerializeField]
+    private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _tripleShotPrefab;
+    [SerializeField]
+    private GameObject _multiShotPrefab; //create handle for Multi shot
+    
+    
+    [SerializeField]
+    private float _fireRate = 0.15f;
+    [SerializeField]
+    private float _canFire = -1f;
+    [SerializeField]
+    private int _lives = 3;
+    [SerializeField]
+    private SpawnManager _spawnManager;
+
+    private bool _isMultiShotActive = false; //variable for isMultiShotActive
     private bool _isTripleShotActive = false;//variable for isTripleShotActive
     private bool _isSpeedBoostActive = false;
     private bool _isShieldActive = false;
-  //  private bool _isAmmoActive = false; //variable reference for isAmmoActive
-[SerializeField]
-private GameObject _shieldVisual;//variable reference to the shield visualizer
 
-[SerializeField]
-private int _shieldHits;
+    [SerializeField]
+    private GameObject _shieldVisual;//variable reference to the shield visualizer
 
-private int _shieldMax = 3;
-private int _shieldMin = 0;
-
-private Color _shieldColor;
-
+    [SerializeField]
+    private int _shieldHits;
+    private int _shieldMax = 3;
+    private int _shieldMin = 0;
+    private Color _shieldColor;
     private SpriteRenderer _shieldSpriteRenderer;
 
     [SerializeField]
@@ -57,10 +60,6 @@ private Color _shieldColor;
     private AudioClip _emptyAmmoSound;
 
     private AudioSource _audioSource;
-
-    
-
-// Start is called before the first frame update
 
     void Start()
     {
@@ -91,8 +90,7 @@ private Color _shieldColor;
             _audioSource.clip = _laserSoundClip;
          }
 
-        //NUll Check Component
-        if (_shieldSpriteRenderer == null)
+        if (_shieldSpriteRenderer == null)//NUll Check Component
         {
             Debug.LogError("ShieldVisual is NULL on Player");
         }
@@ -119,6 +117,7 @@ private Color _shieldColor;
       
     void CalculateMovement()  
     {
+     
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime); //new Vector3(5, 0, 0) * -5 * real time
@@ -165,15 +164,28 @@ private Color _shieldColor;
     {
         CheckAmmo(-1);
         _canFire = Time.time + _fireRate;
+        
+
         if (_isTripleShotActive == true)                                            //instantiate for the triple shot   //if triple shot active true   // if space key press, fire 1 laser
         {
-            Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
+           Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
+        }
+        else if (_isMultiShotActive == true)
+        {
+                Instantiate(_multiShotPrefab, transform.position, Quaternion.identity);
         }
         else
         {
             Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);//else fire one laser
         }
-        
+
+       // if (_isMultiShotActive == true)
+      //  {
+       //      Instantiate(_multiShotPrefab, transform.position, Quaternion.identity);
+       // }
+
+    
+      
         _audioSource.Play();//play laser audio clip
     }
 
@@ -190,7 +202,6 @@ private Color _shieldColor;
         
         _uiManager.AmmoCountUpdate(_ammoCount);
     }
-
 
     public void Damage()
     {                                          //if shield is active
@@ -220,26 +231,26 @@ private Color _shieldColor;
                 _isShieldActive = false;
                 _shieldVisual.SetActive(false);   //deactivate shield//disable the visualizer
             }
-
                 return;                          //return;
         }
 
         _lives--;
-
-        if(_lives == 2)                         //if lives is 2
+         
+        if (_lives == 2)                         //if lives is 2
         {
             _rightEngineVisual.SetActive(true);// enable right engine
         }
         else if (_lives == 1)                   //else if lives is 1
         {
-            _leftEngineVisual.SetActive(true); //enable left engine
+            _leftEngineVisual.SetActive(true); //enable left engine A
         }
 
         _uiManager.UpdateLives(_lives);
        
-         if(_lives < 1)                    // Debug.Log(_lives);//check if dead//if we are destroy us
+         if (_lives < 1)                    // Debug.Log(_lives);//check if dead//if we are destroy us
          {
-            _spawnManager.OnPlayerDeath(); //communicate with SpawnManager //let them know to stop
+           _spawnManager.OnPlayerDeath(); //communicate with SpawnManager //let them know to stop
+           
             Destroy(this.gameObject);
          }
 
@@ -256,8 +267,8 @@ private Color _shieldColor;
             _lives += addLives;
             _rightEngineVisual.SetActive(false); // _rightEngineVisual.SetActive(false);
         }
-            _uiManager.UpdateLives(_lives);     //update sprite img with the parameter of player lives                           
-            _leftEngineVisual.SetActive(false);//reset engine damage to false
+        _uiManager.UpdateLives(_lives);     //update sprite img with the parameter of player lives                           
+        _leftEngineVisual.SetActive(false);//reset engine damage to false
     }
 
 
@@ -272,7 +283,19 @@ private Color _shieldColor;
         yield return new WaitForSeconds(5.0f);
         _isTripleShotActive = false;  
     }
-    
+
+    public void MultiShotActive()
+    {
+        _isMultiShotActive = true;                  //start the power down coroutine for multi shot
+        StartCoroutine(MultiShotPowerDownRoutine());
+    }
+
+    IEnumerator MultiShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isMultiShotActive = false;
+    }
+
     public void SpeedBoostActive()
     {
         _isSpeedBoostActive = true;
@@ -294,6 +317,11 @@ private Color _shieldColor;
         _isShieldActive = true;
        _shieldVisual.SetActive(true);     // enable the visualizer
     }
+
+
+
+  
+
 
     public void AddScore(int points)//method to add 10 to the Score
     {

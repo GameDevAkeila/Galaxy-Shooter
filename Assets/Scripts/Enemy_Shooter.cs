@@ -35,8 +35,6 @@ public class Enemy_Shooter : MonoBehaviour
 
     }
   
-
-    // Update is called once per frame
     void Update()
 
     {
@@ -87,12 +85,11 @@ public class Enemy_Shooter : MonoBehaviour
            Destroy(other.gameObject);//damage laser
            if (_playerShooter != null)
             {
-                _playerShooter.AddScore(5);//add 10 to Score
+                _playerShooter.AddScore(10);//add 10 to Score
             }
             _anim.SetTrigger("OnEnemyDeath");// trigger animation
             _speed = 0;
             _audioSource.Play();
-
             Destroy(GetComponent<Collider2D>());
             Destroy(this.gameObject,2.25f);//destroy us
         }

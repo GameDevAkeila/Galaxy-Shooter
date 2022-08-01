@@ -53,6 +53,9 @@ public class Powerup : MonoBehaviour
                     case 4:
                         player.LifeRefillActive(1);          //call this method from the Player script
                         break;
+                    case 5:
+                       player.MultiShotActive();
+                       break;
                     default:
                         Debug.Log("Default Value");
                         break;

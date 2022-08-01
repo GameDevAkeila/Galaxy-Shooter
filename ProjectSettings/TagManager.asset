@@ -8,6 +8,7 @@ TagManager:
   - Enemy_Shooter
   - Player_Shooter
   - Triple_Shot_PowerUp
+  - Enemy_Laser
   layers:
   - Default
   - TransparentFX

@@ -10,6 +10,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyContainer;
     [SerializeField]
     private GameObject[] powerups;
+    [SerializeField]
+    GameObject _multiShot;
 
     private bool _stopSpawning = false;
 
@@ -19,6 +21,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerUpRoutine());
+        StartCoroutine(SpawnMultiPowerUpRoutine());
     }
 
     // Update is called once per frame
@@ -49,18 +52,29 @@ public class SpawnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3.5f);
 
-        while(_stopSpawning == false)
+        while (_stopSpawning == false)
         {
-        Vector3 posToSpawn = new Vector3 (Random.Range(-8.0f, 8.0f), 7, 0);
-        int randomPowerUp = Random.Range(0, 5); //increase max random range
-        Instantiate(powerups[randomPowerUp], posToSpawn, Quaternion.identity);
-        yield return new WaitForSeconds(Random.Range(2, 4));
+            Vector3 posToSpawn = new Vector3(Random.Range(-8.0f, 8.0f), 7, 0);
+            int randomPowerUp = Random.Range(0, 6); //increase max random range
+            Instantiate(powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(2, 4));
+            // every 3-6 seconds, spawn in a powerup
         }
-        // every 3-6 seconds, spawn in a powerup
     }
+        IEnumerator SpawnMultiPowerUpRoutine()
+        {
+            yield return new WaitForSeconds(20f);
+            while (_stopSpawning == false)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-8.0f, 8.0f), 7, 0);
+                int multiShotRandom = Random.Range(5, 6); //increase max random range
+                Instantiate(powerups[multiShotRandom], posToSpawn, Quaternion.identity);
+                yield return new WaitForSeconds(Random.Range(20f, 40f)); 
+            }
+        }
 
-    public void OnPlayerDeath()
-    {
+        public void OnPlayerDeath()
+        {
         _stopSpawning = true;
-    }
+        }
 }

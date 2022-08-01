@@ -9,6 +9,8 @@ private float _speed = 8.0f;//speed variable of 8
 [SerializeField]
 private bool _isEnemyLaser = false;
 
+   // [SerializeField]
+  //  private float _trajectoryAngle = 0.0f;
     // Update is called once per frame
     void Update()
     {
@@ -23,7 +25,8 @@ private bool _isEnemyLaser = false;
     }   
 
     void MoveUp()
-    { 
+    {
+       // Vector3 directMove = (Quaternion.Euler(0, 0, _trajectoryAngle) * Vector3.up).normalized;
         transform.Translate(Vector3.up * _speed * Time.deltaTime);//translate laser up
         
         if( transform.position.y > 8f)                            //if laser position is greater than 8 on the y
@@ -68,5 +71,18 @@ private bool _isEnemyLaser = false;
             }
         }
     }
+
+   // public float SetDirection()
+  //  {
+   //     return _trajectoryAngle;
+  //  }
+
+  //  public void SetDirection( float direction)
+  //  {
+  //      _trajectoryAngle = direction;
+  //      transform.rotation = Quaternion.Euler(0, 0, _trajectoryAngle);
+  //  }
+
+  
 }
 
