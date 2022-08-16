@@ -55,7 +55,7 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8.0f, 8.0f), 7, 0);
-            int randomPowerUp = Random.Range(0, 6); //increase max random range
+            int randomPowerUp = Random.Range(0, 5); //increase max random range
             Instantiate(powerups[randomPowerUp], posToSpawn, Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(2, 4));
             // every 3-6 seconds, spawn in a powerup

@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
     private TMP_Text _restartText;
     [SerializeField]
     private TMP_Text _ammoCountText;
+    [SerializeField]
+    private TMP_Text _emptyAmmo;
     
    
 
@@ -45,10 +47,23 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + playerShooterScore.ToString();
     }
 
-    public void AmmoCountUpdate(int playerShooterAmmo)
+   // public void UpdateAmmoCount(int playerShooterAmmo)
+   // {
+    //    _ammoCountText.text = "Ammo: {playerShooterAmmo}";
+    //    if (playerShooterAmmo == 0)
+     //   {
+      //      _emptyAmmo.gameObject.SetActive(true);
+     //   }
+    //    else if (playerShooterAmmo > 0)
+    //    {
+    //        _emptyAmmo.gameObject.SetActive(false);
+    //    }
+   // }
+
+    public void UpdateAmmoCount(int playerShooterAmmo)
     {
         _ammoCountText.text = "Ammo: " + playerShooterAmmo.ToString();
-        
+
         if (playerShooterAmmo == 0)
         {
             _ammoCountText.color = Color.red;
@@ -57,12 +72,14 @@ public class UIManager : MonoBehaviour
         {
             _ammoCountText.color = Color.yellow;
         }
-        else if(playerShooterAmmo == 15)
+
+        else if (playerShooterAmmo == 15)
         {
             _ammoCountText.color = Color.green;
         }
 
     }
+
     public void UpdateLives(int currentLives)
     {
         _LivesImg.sprite = _livesSprite[currentLives]; //display img sprite//give it a new one base on currentLives index

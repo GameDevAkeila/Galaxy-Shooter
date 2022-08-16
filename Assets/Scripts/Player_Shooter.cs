@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Player_Shooter : MonoBehaviour
 {
 [SerializeField]
 private float _speed = 4.0f;
-private float _speedMultiplier = 4;
+private float _speedMultiplier = 2;
 
     [SerializeField]
     private GameObject _laserPrefab;
@@ -46,12 +47,16 @@ private float _speedMultiplier = 4;
     private GameObject _leftEngineVisual;
     [SerializeField]
     private GameObject _thruster;
+    [SerializeField]
+    private Image _thrusterBarImg;
+    private bool _isThrusterActive = false;
+    private float _thrusterCoolDown = 2.0f;
 
     [SerializeField]
     private int _score;
     [SerializeField]
     private int _ammoCount = 15;
-
+    
     private UIManager _uiManager;
 
     [SerializeField]
@@ -111,96 +116,115 @@ private float _speedMultiplier = 4;
             FireLaser();
         }
         
-        Thruster();
+        //Thruster();
        
     }
-      
-    void CalculateMovement()  
+
+    void CalculateMovement()
     {
-     
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime); //new Vector3(5, 0, 0) * -5 * real time
-        transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
-        
+        Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
+        transform.Translate(direction * _speed * Time.deltaTime);
+       // transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime); //new Vector3(5, 0, 0) * -5 * real time
+       // transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
+
         if (transform.position.y >= 0)
         {
             transform.position = new Vector3(transform.position.x, 0, 0);
         }
-        else if ( transform.position.y <= -3.8f)
+        else if (transform.position.y <= -3.8f)
         {
             transform.position = new Vector3(transform.position.x, -3.8f, 0);
         }
-        
+
         if (transform.position.x > 11.3f)                                   //if player on the x > 11
         {
             transform.position = new Vector3(-11.3f, transform.position.y, 0);//x pos = -11
         }
         else if (transform.position.x < -11.3f)                                //else if player on the x is less than -11
         {
-            transform.position = new Vector3(11.3f,transform.position.y, 0);//x pos = 11
+            transform.position = new Vector3(11.3f, transform.position.y, 0);//x pos = 11
         }
 
-    }
 
-    void Thruster()
-    {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _thrusterBarImg.fillAmount > 0)
         {
-            if(_thruster != null)
+
+            transform.Translate(direction * _speed * _speedMultiplier * Time.deltaTime);
+            _thruster.SetActive(true);
+            _isThrusterActive = true;
+            if (_isThrusterActive == true)
             {
-                _speed = 10f;
-                _thruster.SetActive(true);
+                _thrusterBarImg.fillAmount -= 1.0f / _thrusterCoolDown * Time.deltaTime;
             }
+           
+        }
+        else if(Input.GetKey(KeyCode.LeftShift) && _thrusterBarImg.fillAmount == 0)
+        {
+            _thrusterBarImg.fillAmount = 0;
+            _thruster.SetActive(false);
+            transform.Translate(direction * _speed * Time.deltaTime);
+           
         }
         else
         {
-            _speed = 4f;
             _thruster.SetActive(false);
+            transform.Translate(direction * _speed * Time.deltaTime);
+            _thrusterBarImg.fillAmount += 0.1f / _thrusterCoolDown * Time.deltaTime;
         }
     }
+
+    // void Thruster()
+    // {
+    //    if (Input.GetKey(KeyCode.LeftShift))
+    //  {
+    //     if(_thruster != null)
+    //    {
+    //        _speed = 10f;
+    //         _thruster.SetActive(true);
+    //     }
+    //   }
+    //  else
+    //{
+    //    _speed = 4f;
+    //     _thruster.SetActive(false);
+    // }
+    //  }
 
     void FireLaser()
     {
-        CheckAmmo(-1);
-        _canFire = Time.time + _fireRate;
-        
-
+         CheckAmmo(-1);
+         _canFire = Time.time + _fireRate;
+         
+        // Vector3 offset = new Vector3 (0, 1.14f, 0);
         if (_isTripleShotActive == true)                                            //instantiate for the triple shot   //if triple shot active true   // if space key press, fire 1 laser
         {
-           Instantiate (_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
+            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
         }
         else if (_isMultiShotActive == true)
         {
-                Instantiate(_multiShotPrefab, transform.position, Quaternion.identity);
+            Instantiate(_multiShotPrefab, transform.position, Quaternion.identity);
         }
         else
         {
-            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0) , Quaternion.identity);//else fire one laser
+            Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);//else fire one laser
         }
-
-       // if (_isMultiShotActive == true)
-      //  {
-       //      Instantiate(_multiShotPrefab, transform.position, Quaternion.identity);
-       // }
-
-    
-      
         _audioSource.Play();//play laser audio clip
     }
 
-    public void CheckAmmo(int ammo)
-    {
-        if(ammo >= _ammoCount)
+   public void CheckAmmo(int ammo)
+   {
+       if(ammo >= _ammoCount)
         {
             _ammoCount = 15;
-        }
+       }
         else
         {
             _ammoCount += ammo;
+            
         }
-        
-        _uiManager.AmmoCountUpdate(_ammoCount);
+        _uiManager.UpdateAmmoCount(_ammoCount);
     }
 
     public void Damage()
