@@ -9,6 +9,14 @@ public class Enemy_Shooter : MonoBehaviour
     [SerializeField]
     private GameObject _laserPrefab;
 
+    private float _frequency = 2f;
+    //width of cycle
+    private float _amplitude = 5f;
+    //speed  to complete cycyle
+    private float _newSpeed = 2f;
+    private Vector3 _pos;
+    private Vector3 _axisPos;
+
     private Player_Shooter _playerShooter;
     private Animator _anim;// handle to animator component
     private AudioSource _audioSource;
@@ -18,6 +26,8 @@ public class Enemy_Shooter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _pos = transform.position;
+        _axisPos = transform.right;
         _playerShooter = GameObject.Find("Player_Shooter").GetComponent<Player_Shooter>();
         // null check for the player
         _audioSource = GetComponent<AudioSource>();
@@ -39,6 +49,7 @@ public class Enemy_Shooter : MonoBehaviour
 
     {
         CalculateMovement();
+        EnemyMovement();
 
         if (Time.time > _canFire)
       
@@ -63,6 +74,12 @@ public class Enemy_Shooter : MonoBehaviour
             float randomV = Random.Range(-8f, 8f);//respawn at top with new random X position
             transform.position = new Vector3(randomV, 7, 0);
         }
+    }
+
+    void EnemyMovement()
+    {
+        _pos += Vector3.down * _newSpeed * Time.deltaTime;
+        transform.position = _pos + _axisPos * Mathf.Sin(Time.time * _frequency) * _amplitude;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
