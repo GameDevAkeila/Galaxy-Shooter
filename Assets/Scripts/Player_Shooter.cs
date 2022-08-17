@@ -66,13 +66,16 @@ private float _speedMultiplier = 2;
 
     private AudioSource _audioSource;
 
+    private CameraShake _playerCamShake;
+
     void Start()
-    {
+    {   //Get Component
+        _playerCamShake = GameObject.Find("Camera").GetComponent<CameraShake>();
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _audioSource = GetComponent<AudioSource>();
-        //Get Component
+        
         _shieldSpriteRenderer = _shieldVisual.GetComponent<SpriteRenderer>();
 
         //find the GameObject. Then GetComponent
@@ -269,7 +272,9 @@ private float _speedMultiplier = 2;
             _leftEngineVisual.SetActive(true); //enable left engine A
         }
 
+        _playerCamShake.ShakeActivate();
         _uiManager.UpdateLives(_lives);
+        
        
          if (_lives < 1)                    // Debug.Log(_lives);//check if dead//if we are destroy us
          {
@@ -330,9 +335,11 @@ private float _speedMultiplier = 2;
     IEnumerator SpeedBoostPowerDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
+         _speed /= _speedMultiplier;
         _isSpeedBoostActive = false;
-        _speed /= _speedMultiplier;
     }
+       
+
 
     public void ShieldActive()
     {
