@@ -23,7 +23,7 @@ private float _speedMultiplier = 2;
     private float _canFire = -1f;
     [SerializeField]
     private int _lives = 3;
-    [SerializeField]
+    
     private SpawnManager _spawnManager;
 
     private bool _isMultiShotActive = false; //variable for isMultiShotActive
@@ -54,8 +54,8 @@ private float _speedMultiplier = 2;
 
     [SerializeField]
     private int _score;
-    [SerializeField]
-    private int _ammoCount = 15;
+    
+    private int _ammoCount = 30;
     
     private UIManager _uiManager;
 
@@ -101,6 +101,11 @@ private float _speedMultiplier = 2;
         if (_shieldSpriteRenderer == null)//NUll Check Component
         {
             Debug.LogError("ShieldVisual is NULL on Player");
+        }
+
+        if (_playerCamShake == null)
+        {
+            Debug.LogError("The Camera Shake is Null.");
         }
     }
 
@@ -197,7 +202,9 @@ private float _speedMultiplier = 2;
 
     void FireLaser()
     {
-         CheckAmmo(-1);
+         //CheckAmmo(-1);
+        _ammoCount -= 1;
+        _uiManager.UpdateAmmoCount(_ammoCount);
          _canFire = Time.time + _fireRate;
          
         // Vector3 offset = new Vector3 (0, 1.14f, 0);
@@ -216,19 +223,19 @@ private float _speedMultiplier = 2;
         _audioSource.Play();//play laser audio clip
     }
 
-   public void CheckAmmo(int ammo)
-   {
-       if(ammo >= _ammoCount)
-        {
-            _ammoCount = 15;
-       }
-        else
-        {
-            _ammoCount += ammo;
+   //public void CheckAmmo(int ammo)
+  //{
+    //   if(ammo >= _ammoCount)
+    //    {
+   //         _ammoCount = 15;
+   //    }
+   //     else
+    //    {
+    //        _ammoCount += ammo;
             
-        }
-        _uiManager.UpdateAmmoCount(_ammoCount);
-    }
+   //     }
+   //     _uiManager.UpdateAmmoCount(_ammoCount);
+   // }
 
     public void Damage()
     {                                          //if shield is active
@@ -339,8 +346,6 @@ private float _speedMultiplier = 2;
         _isSpeedBoostActive = false;
     }
        
-
-
     public void ShieldActive()
     {
         _shieldHits = 3;
@@ -348,11 +353,6 @@ private float _speedMultiplier = 2;
         _isShieldActive = true;
        _shieldVisual.SetActive(true);     // enable the visualizer
     }
-
-
-
-  
-
 
     public void AddScore(int points)//method to add 10 to the Score
     {

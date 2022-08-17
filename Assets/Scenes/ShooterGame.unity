@@ -297,7 +297,6 @@ MonoBehaviour:
   _fireRate: 0.15
   _canFire: -1
   _lives: 3
-  _spawnManager: {fileID: 0}
   _shieldVisual: {fileID: 1116273394}
   _shieldHits: 0
   _rightEngineVisual: {fileID: 1910275887}
@@ -305,7 +304,6 @@ MonoBehaviour:
   _thruster: {fileID: 8726964483802911119, guid: 4c64ce92a2f2c8745aa73d08782e23de, type: 3}
   _thrusterBarImg: {fileID: 1388575147}
   _score: 0
-  _ammoCount: 15
   _laserSoundClip: {fileID: 8300000, guid: f66b8cb37c1e668409a69357eda3d1f4, type: 3}
   _emptyAmmoSound: {fileID: 8300000, guid: b964d04a498779345a52247b72b47072, type: 3}
 --- !u!212 &22731323
@@ -817,7 +815,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ammo:15
+  m_text: ammo:/30
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -1383,7 +1381,6 @@ MonoBehaviour:
   _gameOverText: {fileID: 1752039147}
   _restartText: {fileID: 790422334}
   _ammoCountText: {fileID: 560860900}
-  _emptyAmmo: {fileID: 0}
 --- !u!114 &1104064550
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -47,13 +47,13 @@ public class Powerup : MonoBehaviour
                     case 2:
                         player.ShieldActive();              //else if powerup is 2
                         break;
+                    //case 3:
+                        //player.CheckAmmo(15);
+                      //  break;
                     case 3:
-                        player.CheckAmmo(15);
-                        break;
-                    case 4:
                         player.LifeRefillActive(1);          //call this method from the Player script
                         break;
-                    case 5:
+                    case 4:
                        player.MultiShotActive();
                        break;
                     default:

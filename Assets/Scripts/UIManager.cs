@@ -18,8 +18,9 @@ public class UIManager : MonoBehaviour
     private TMP_Text _restartText;
     [SerializeField]
     private TMP_Text _ammoCountText;
-    [SerializeField]
-    private TMP_Text _emptyAmmo;
+   
+   
+    private int MaxAmmo = 30;
     
    
 
@@ -32,7 +33,8 @@ public class UIManager : MonoBehaviour
         //assign text component to the handle
         _scoreText.text = "Score: " + 0;
         //assign text component to the handle
-        _ammoCountText.text = "Ammo: " + 15;
+        //_ammoCountText.text = "Ammo: " + 15;
+        UpdateAmmoCount(MaxAmmo);
         _gameOverText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
@@ -47,33 +49,21 @@ public class UIManager : MonoBehaviour
         _scoreText.text = "Score: " + playerShooterScore.ToString();
     }
 
-   // public void UpdateAmmoCount(int playerShooterAmmo)
-   // {
-    //    _ammoCountText.text = "Ammo: {playerShooterAmmo}";
-    //    if (playerShooterAmmo == 0)
-     //   {
-      //      _emptyAmmo.gameObject.SetActive(true);
-     //   }
-    //    else if (playerShooterAmmo > 0)
-    //    {
-    //        _emptyAmmo.gameObject.SetActive(false);
-    //    }
-   // }
 
-    public void UpdateAmmoCount(int playerShooterAmmo)
+    public void UpdateAmmoCount(int ammoCount )//playerShooterAmmo
     {
-        _ammoCountText.text = "Ammo: " + playerShooterAmmo.ToString();
-
-        if (playerShooterAmmo == 0)
+        // _ammoCountText.text = "Ammo: " + playerShooterAmmo.ToString();
+        _ammoCountText.text = "Ammo:" + ammoCount + "/" + MaxAmmo;
+        if (ammoCount == 0)//playerShooterAmmo
         {
             _ammoCountText.color = Color.red;
         }
-        else if (playerShooterAmmo == 5)
+        else if (ammoCount == 15)//playerShooterAmmo
         {
             _ammoCountText.color = Color.yellow;
         }
 
-        else if (playerShooterAmmo == 15)
+        else if (ammoCount == 30)//playerShooterAmmo
         {
             _ammoCountText.color = Color.green;
         }
