@@ -12,9 +12,7 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private AudioClip _clip;
 
-    // Start is called before the first frame update
-
-    // Update is called once per frame
+    
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);// move down at the speed of 3
@@ -47,15 +45,17 @@ public class Powerup : MonoBehaviour
                     case 2:
                         player.ShieldActive();              //else if powerup is 2
                         break;
-                    //case 3:
-                        //player.CheckAmmo(15);
-                      //  break;
-                    case 3:
-                        player.LifeRefillActive(1);          //call this method from the Player script
+                    case 3:player.AmmoActive(30);
                         break;
                     case 4:
+                        player.LifeRefillActive(1);          //call this method from the Player script
+                        break;
+                    case 5:
                        player.MultiShotActive();
                        break;
+                    case 6:
+                        player.NegativePickUpActive();
+                        break;
                     default:
                         Debug.Log("Default Value");
                         break;

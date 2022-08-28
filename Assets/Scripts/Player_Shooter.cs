@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Player_Shooter : MonoBehaviour
 {
-[SerializeField]
-private float _speed = 4.0f;
-private float _speedMultiplier = 2;
+    [SerializeField]
+    private float _speed = 4.0f;
+    private float _speedMultiplier = 2;
+    private float _calculateSpeed = 4;
 
     [SerializeField]
     private GameObject _laserPrefab;
@@ -30,6 +31,7 @@ private float _speedMultiplier = 2;
     private bool _isTripleShotActive = false;//variable for isTripleShotActive
     private bool _isSpeedBoostActive = false;
     private bool _isShieldActive = false;
+    private bool _isNegativePickUpActive = false;
 
     [SerializeField]
     private GameObject _shieldVisual;//variable reference to the shield visualizer
@@ -54,6 +56,7 @@ private float _speedMultiplier = 2;
 
     [SerializeField]
     private int _score;
+    private int _wavesNumber;
     
     private int _ammoCount = 30;
     
@@ -80,9 +83,9 @@ private float _speedMultiplier = 2;
 
         //find the GameObject. Then GetComponent
         if (_spawnManager == null)
-         {
+        {
              Debug.LogError("The Spawn Manager is NULL.");
-         }
+        }
 
          if (_uiManager == null)
          {
@@ -123,9 +126,7 @@ private float _speedMultiplier = 2;
             }
             FireLaser();
         }
-        
         //Thruster();
-       
     }
 
     void CalculateMovement()
@@ -158,7 +159,6 @@ private float _speedMultiplier = 2;
 
         if (Input.GetKey(KeyCode.LeftShift) && _thrusterBarImg.fillAmount > 0)
         {
-
             transform.Translate(direction * _speed * _speedMultiplier * Time.deltaTime);
             _thruster.SetActive(true);
             _isThrusterActive = true;
@@ -166,14 +166,12 @@ private float _speedMultiplier = 2;
             {
                 _thrusterBarImg.fillAmount -= 1.0f / _thrusterCoolDown * Time.deltaTime;
             }
-           
         }
         else if(Input.GetKey(KeyCode.LeftShift) && _thrusterBarImg.fillAmount == 0)
         {
             _thrusterBarImg.fillAmount = 0;
             _thruster.SetActive(false);
             transform.Translate(direction * _speed * Time.deltaTime);
-           
         }
         else
         {
@@ -202,12 +200,10 @@ private float _speedMultiplier = 2;
 
     void FireLaser()
     {
-         //CheckAmmo(-1);
         _ammoCount -= 1;
         _uiManager.UpdateAmmoCount(_ammoCount);
-         _canFire = Time.time + _fireRate;
-         
-        // Vector3 offset = new Vector3 (0, 1.14f, 0);
+        _canFire = Time.time + _fireRate;
+        //_isAmmoActive = true;
         if (_isTripleShotActive == true)                                            //instantiate for the triple shot   //if triple shot active true   // if space key press, fire 1 laser
         {
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);// instantiate 3 lasers (triple shot prefab)// fire 3 lasers (triple shot prefab)
@@ -222,20 +218,6 @@ private float _speedMultiplier = 2;
         }
         _audioSource.Play();//play laser audio clip
     }
-
-   //public void CheckAmmo(int ammo)
-  //{
-    //   if(ammo >= _ammoCount)
-    //    {
-   //         _ammoCount = 15;
-   //    }
-   //     else
-    //    {
-    //        _ammoCount += ammo;
-            
-   //     }
-   //     _uiManager.UpdateAmmoCount(_ammoCount);
-   // }
 
     public void Damage()
     {                                          //if shield is active
@@ -307,6 +289,18 @@ private float _speedMultiplier = 2;
         _leftEngineVisual.SetActive(false);//reset engine damage to false
     }
 
+    public void AmmoActive(int ammo)
+    {
+        if (ammo >= _ammoCount)
+        {
+            _ammoCount = 30;
+        }
+        else
+        {
+            _ammoCount += ammo;
+        }
+        _uiManager.UpdateAmmoCount(_ammoCount);
+    }
 
     public void TripleShotActive()
     { 
@@ -345,7 +339,23 @@ private float _speedMultiplier = 2;
          _speed /= _speedMultiplier;
         _isSpeedBoostActive = false;
     }
-       
+
+    public void NegativePickUpActive()
+    {
+        _isNegativePickUpActive = true;
+        _speed /= _calculateSpeed;
+        StartCoroutine(NegativePickUpPowerDownRoutine());
+    }
+
+    IEnumerator NegativePickUpPowerDownRoutine()
+    {
+
+        yield return new WaitForSeconds(5.0f);
+        _speed = _speed;
+        _isNegativePickUpActive = false;
+    }
+
+
     public void ShieldActive()
     {
         _shieldHits = 3;
@@ -358,5 +368,15 @@ private float _speedMultiplier = 2;
     {
         _score += points;
         _uiManager.UpdateScore(_score);//communicate with the UI to update the score
+    }
+
+    public void AddWaves(int points)//method to add 10 to the Score
+    {
+        _wavesNumber -= points;
+        _uiManager.UpdateWaveCount(_wavesNumber);//communicate with the UI to update the score
+        if(_wavesNumber == 0)
+        {
+            _uiManager.YouWin();
+        }
     }
 }
